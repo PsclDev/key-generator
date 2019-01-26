@@ -94,7 +94,8 @@ namespace Generator
             Console.WriteLine();
             Console.WriteLine();
 
-            
+            GenerateKeys(_pattern.ToUpper(), Convert.ToInt32(_val));
+            ExportKeys();
 
             Console.ReadLine();
         }
@@ -122,7 +123,7 @@ namespace Generator
             {
                 int amount = Program.SerialKeys.Count;
                 DateTime now = DateTime.Now;
-                string ExportPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\SerialKeyGenerator";
+                string ExportPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\KeyGenerator";
                 Directory.CreateDirectory(ExportPath);
 
 
