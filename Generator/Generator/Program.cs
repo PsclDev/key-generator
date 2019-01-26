@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Generator
 {
     class Program
     {
+        public static List<string> SerialKeys = new List<string>();
         static void Main(string[] args)
         {
             Console.WriteLine("||||||||| KEY  GENERATOR |||||||||");
@@ -105,12 +105,8 @@ namespace Generator
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    string tempKey = SerialKey.Generate(pattern);
-                    if (ExistingKeys.Where(o => string.Equals(tempKey, o, StringComparison.OrdinalIgnoreCase)).Any())
-                        amount++;
-                    else
-                        SerialKeys.Add(tempKey);
-
+                    string tempKey = Key.Generate(pattern);
+                    SerialKeys.Add(tempKey);
                     progress.Report((double)i / amount);
                 }
             }
@@ -118,6 +114,42 @@ namespace Generator
             Console.WriteLine();
             Console.WriteLine("Start Export");
             Console.WriteLine();
+        }
+
+        static void ExportKeys()
+        {
+            try
+            {
+                int amount = Program.SerialKeys.Count;
+                DateTime now = DateTime.Now;
+                string ExportPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\SerialKeyGenerator";
+                Directory.CreateDirectory(ExportPath);
+
+
+                string filename = $"{ExportPath}\\{amount} Keys_Generated__Date_{now.ToString("ddMMyyyy - hhmm")}.txt";
+                FileStream fs = new FileStream(filename, FileMode.Create);
+                StreamWriter sw = new StreamWriter(fs);
+
+                using (var progress = new ProgressBar())
+                {
+                    for (int i = 0; i < SerialKeys.Count; i++)
+                    {
+                        sw.WriteLine(SerialKeys[i]);
+                        progress.Report((double)i / SerialKeys.Count);
+                    }
+                }
+                sw.Close();
+
+                Database.AddSerialKeys();
+
+                Console.WriteLine("Keys has been exported");
+
+                System.Diagnostics.Process.Start(ExportPath);
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.PrintError(ex.ToString());
+            }
         }
     }
 }
