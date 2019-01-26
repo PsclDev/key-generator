@@ -140,8 +140,6 @@ namespace Generator
                 }
                 sw.Close();
 
-                Database.AddSerialKeys();
-
                 Console.WriteLine("Keys has been exported");
 
                 System.Diagnostics.Process.Start(ExportPath);
